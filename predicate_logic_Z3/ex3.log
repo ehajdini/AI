@@ -1,0 +1,77 @@
+sat
+sat
+(model 
+  (define-fun stat3 () Bool
+    true)
+  (define-fun x!5 () Int
+    0)
+  (define-fun stat2 () Bool
+    true)
+  (define-fun stat1 () Bool
+    true)
+  (define-fun y!0!56 ((x!0 Int)) Int
+    (ite (= x!0 4) 5
+    (ite (= x!0 2) 6
+    (ite (= x!0 1) 7
+    (ite (= x!0 6) 11
+    (ite (= x!0 9) 12
+    (ite (= x!0 8) 13
+    (ite (= x!0 10) 14
+      1))))))))
+  (define-fun k!55 ((x!0 Int)) Int
+    (ite (= x!0 3) 3
+    (ite (= x!0 12) 12
+    (ite (= x!0 15) 15
+    (ite (= x!0 11) 11
+    (ite (= x!0 13) 13
+    (ite (= x!0 17) 17
+    (ite (= x!0 1) 1
+    (ite (= x!0 9) 9
+    (ite (= x!0 10) 10
+    (ite (= x!0 0) 0
+    (ite (= x!0 5) 5
+    (ite (= x!0 16) 16
+    (ite (= x!0 2) 2
+    (ite (= x!0 14) 14
+    (ite (= x!0 18) 18
+    (ite (= x!0 4) 4
+    (ite (= x!0 8) 8
+    (ite (= x!0 6) 6
+      7)))))))))))))))))))
+  (define-fun y!0 ((x!0 Int)) Int
+    (y!0!56 (k!55 x!0)))
+  (define-fun p!57 ((x!0 Int) (x!1 Int)) Bool
+    (ite (and (= x!0 2) (= x!1 0)) false
+    (ite (and (= x!0 1) (= x!1 0)) false
+    (ite (and (= x!0 1) (= x!1 1)) false
+    (ite (and (= x!0 2) (= x!1 1)) false
+      true)))))
+  (define-fun q!58 ((x!0 Int) (x!1 Int)) Bool
+    (ite (and (= x!0 2) (= x!1 0)) false
+    (ite (and (= x!0 1) (= x!1 0)) false
+    (ite (and (= x!0 1) (= x!1 1)) false
+    (ite (and (= x!0 2) (= x!1 1)) false
+      true)))))
+  (define-fun r ((x!0 Int) (x!1 Int)) Bool
+    true)
+  (define-fun y!7!59 ((x!0 Int)) Int
+    (ite (= x!0 1) 4
+      3))
+  (define-fun y!2!60 ((x!0 Int)) Int
+    (ite (= x!0 4) 8
+    (ite (= x!0 2) 9
+    (ite (= x!0 1) 10
+    (ite (= x!0 10) 15
+    (ite (= x!0 8) 16
+    (ite (= x!0 7) 17
+    (ite (= x!0 5) 18
+      2))))))))
+  (define-fun y!2 ((x!0 Int)) Int
+    (y!2!60 (k!55 x!0)))
+  (define-fun p ((x!0 Int) (x!1 Int)) Bool
+    (p!57 (k!55 x!0) (k!55 x!1)))
+  (define-fun q ((x!0 Int) (x!1 Int)) Bool
+    (q!58 (k!55 x!0) (k!55 x!1)))
+  (define-fun y!7 ((x!0 Int)) Int
+    (y!7!59 (k!55 x!0)))
+)
