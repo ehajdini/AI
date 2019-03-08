@@ -1,0 +1,19 @@
+Ex 3 (related files: ex3.log ex3.z3)
+Prove that if the following three statements hold, then ∀x∃y : r(x, y), for x, y, z ∈ Z. 1. ∀x∃y : p(x, y)
+2. ∀x∃y : q(x, y)
+3. ∀x∀y:[(p(x,y)∨q(x,y)) =⇒ ∀z:[(p(y,z)∨q(y,z)) =⇒ r(x,z)]]
+
+Ex 4 (related files: ex4.log ex4.z3)
+There are four gardens that cultivate different kinds of flowers (rose, tulip, and lily), veg- etables (onion, carrot, and pepper), and fruits (apple, banana, and cherry).
+Given that we know the facts given in the list below, use Z3 to prove that there must be (a) a lily in garden1, (b) a fruit in gardens 2 and 3 (the same kind of fruit in both), and (c) tulips and roses are in the same garden. Formulate each of the facts (1.-10.) and the statements to be proved (a-c) as a separate statement in Z3. 
+Write all statements in general form (i.e. without referring to particular objects), unless the description refers to particular objects.
+1. Any plant is either a fruit, a flower, or a vegetable.
+2. Everybody grows exactly 3 different plants.
+3. Every plant is in at least one garden.
+4. Exactly one garden has all 3 kinds of fruits.
+5. Exactly 3 plants are in 2 or more gardens and they are one vegetable and two fruits. All others plants are in a single garden.
+6. There is no garden that grows both rose and carrots.
+7. Any garden with tulip has another flower.
+8. Garden1 has one fruit, one vegetable and one flower.
+9. Garden2 has no flowers.
+10. Gardens 1 and 4 have carrots and Garden3 has bananas.
