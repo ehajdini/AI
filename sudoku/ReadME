@@ -1,4 +1,4 @@
-Encode the Sudoku puzzle () as Constraint Satisfaction Problem using the Z3 language fragment. 
+Encode the Sudoku puzzle as Constraint Satisfaction Problem using the Z3 language fragment. 
 
 
 1. Typical Sudoku constraints:
