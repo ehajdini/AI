@@ -173,7 +173,9 @@
 (init (cell 7 8 wall))
 (init (cell 8 8 wall))
 
-
+;;;Both players move simoultaneously so both of them have the control
+(init (control blue))
+(init (control red))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -189,16 +191,42 @@
 ;;;;;;        action executed by ?player
 ; )
 
-(<= (legal ?player (nextCell ?move ?x ?y ?x2 ?y2))
-(not(true(cell ?x2 ?y2 wall)))
-(true (control ?player))
+
+;;;A move is legal if the current cell is a head but not a wall
+;;;Otherwise we would have a crash
+
+(<= (legal red moveRight)
+    (true (cell ?x ?y redHead))
+    (not (true (cell ?x ?y wall)))
 )
-
-(<= (legal ?player (nextCell ?move ?x ?y ?x2 ?y2))
-
+(<= (legal blue moveRight)
+    (true (cell ?x ?y blueHead))
+    (not (true (cell ?x ?y wall)))
 )
-
-
+(<= (legal red moveLeft)
+    (true (cell ?x ?y redHead))
+    (not (true (cell ?x ?y wall)))
+)
+(<= (legal blue moveLeft)
+    (true (cell ?x ?y blueHead))
+    (not (true (cell ?x ?y wall)))
+)
+(<= (legal red moveUp)
+    (true (cell ?x ?y redHead))
+    (not (true (cell ?x ?y wall)))
+)
+(<= (legal blue moveUp)
+    (true (cell ?x ?y blueHead))
+    (not (true (cell ?x ?y wall)))
+)
+(<= (legal red moveDown)
+    (true (cell ?x ?y redHead))
+    (not (true (cell ?x ?y wall)))
+)
+(<= (legal blue moveDown)
+    (true (cell ?x ?y blueHead))
+    (not (true (cell ?x ?y wall)))
+)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,62 +249,96 @@
 ;; Coins are not consumable
 (<= (next (cell ?x ?y coin))
     (true (cell ?x ?y coin)))
-
+;;;; there are four possible moves the players can make
+(input ?player moveRight)
+(input ?player moveLeft)
+(input ?player moveUp)
+(input ?player moveDown)
 
 ;; TODO: Apple is not consumed if none of the players move onto it
 ;; Example rule head:
- (<= (next (cell ?x ?y apple))
-;;;;; ... rule body ...
-(does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
-(or (distinct ?x ?x2) (distinct ?y ?y2))
- )
+;; the apple will remain if in the cell where there is an apple 
+;; the next move of a player will not go on top of it
 
+(<= (next (cell ?x ?y apple))
+    (true (cell ?x ?y apple))
+    (not (nextCell ?move ?x1 ?y1 ?x ?y)) 
+)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; moving snakes
 
 ;; TODO: Head is moved to destination cell
 ;; Example rule head:
-; (<= (next (cell ?x2 ?y2 ?head))
-;;;;; ... rule body ...
-; )
+;; the red snake will progress if the head chooses a move
+;; that is legal from position 1 to 2
+;; and currently the head is at 1
+    (<= (next (cell ?x2 ?y2 redHead))
+    (true (cell ?x1 ?y1 redHead))
+    (does red ?move) 
+    (nextCell ?move ?x1 ?y1 ?x2 ?y2)
+    )
+;; the blue snake will progress if the head chooses a move
+;; that is legal from position 1 to 2
+;; and currently the head is at 1
 
-(<= (next (cell ?x2 ?y2 ?head))
-(does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
-(true(cell ?x1 ?y1 ?head))
-)
-
+    (<= (next (cell ?x2 ?y2 blueHead))
+    (true (cell ?x1 ?y1 blueHead))
+    (does blue ?move) 
+    (nextCell ?move ?x1 ?y1 ?x2 ?y2)
+    )
 
 ;; TODO: Non-tail body cells remain body cells
 ;; Example rule head:
-; (<= (next (cell ?x2 ?y2 ?body))
-;;;;; ... rule body ...
-; )
+;; the body of a blue snake will remain the same 
+;; if it is not a tail and it is a body piece
+    (<= (next (cell ?x2 ?y2 blueBody))
+            (true (cell ?x2 ?y2 blueBody))
+        )
 
-(<= (next (cell ?x2 ?y2 ?body))
-(does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
-(true(cell ?x1 ?y1 ?body))
-)
+;; the body of a red snake will remain the same 
+;; if it is not a tail and it is a body piece
+      (<= (next (cell ?x2 ?y2 redBody)) 
+            (true (cell ?x2 ?y2 redBody))
+    )
 
 ;; TODO: connected facts for non-tail cells remain invariant
 ;; Example rule head:
-; (<= (next (connected ?x1 ?y1 ?x2 ?y2 ?body))
-;;;;; ... rule body ...
-; )
-
-(<= (next (connected ?x1 ?y1 ?x2 ?y2 ?body))
-(true(connected ?x1 ?y1 ?x2 ?y2 ?body))
- )
-
+    (<= (next (connected ?x1 ?y1 ?x2 ?y2 redBody))
+            ( and 
+                (not (true (cell ?x2 ?y2 redTail))) 
+                (true (cell ?x2 ?y2 redBody))
+            )
+            ( and 
+                (not (true (cell ?x1 ?y1 redTail))) 
+                (true (cell ?x1 ?y1 redBody))
+            )
+            (connected ?x1 ?y1 ?x2 ?y2 redBody)
+    )
 
 
 ;; TODO: ceate new connected fact, connecting previous head cell to the new
 ;; head cell
 ;; Example rule head:
-; (<= (next (connected ?x1 ?y1 ?x2 ?y2 ?body))
-;;;;; ... rule body ...
-; )
 
+;; the head will be connected if at position 1 red snake has its head
+;; and red snake moves to position 2
+;; position 1 and 2 get connected
+    (<= (next (connected ?x1 ?y1 ?x2 ?y2 redBody))
+        (true (cell ?x1 ?y1 redHead))
+        (does red ?move) 
+        (nextCell ?move ?x1 ?y1 ?x2 ?y2)
+    )
+
+
+;; the head will be connected if at position 1 blue snake has its head
+;; and blue snake moves to position 2
+;; position 1 and 2 get connected
+    (<= (next (connected ?x1 ?y1 ?x2 ?y2 blueBody))
+        (true (cell ?x1 ?y1 blueHead))
+        (does blue ?move) 
+        (nextCell ?move ?x1 ?y1 ?x2 ?y2)
+    )
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; auxilary relations
@@ -284,34 +346,73 @@
 ;; TODO: set the following auxilary relation if the player is going to move onto
 ;; apple cell
 ;; Example rule head:
-; (<= (movingOntoApple ?player)
-;;;;; ... rule body ...
-; )
-
- (<= (movingOntoApple ?player)
- (does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
- (true (cell ?x2 ?y2 apple))	
+;; a red player or a blue player can move onto an apple 
+;; if they make a move from 1 to 2 and 2 is a cell with an apple into it
+(<= (movingOntoApple ?player)
+        (or 
+          ( and
+                (does blue ?move) 
+                (nextCell ?move ?x1 ?y1 ?x2 ?y2)     
+                (true (cell ?x2 ?y2 apple))
+          )
+         ( and
+                (does red ?move) 
+                (nextCell ?move ?x1 ?y1 ?x2 ?y2)     
+                (true (cell ?x2 ?y2 apple))
+          )
+        )
 )
+
 
 ;; TODO: set the following auxilary relation if the player is going to move onto
 ;; coin cell
 ;; Example rule head:
-; (<= (movingOntoCoin ?player)
-;;;;; ... rule body ...
-; )
 
-(<= (movingOntoCoin ?player)
- (does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
- (true (cell ?x2 ?y2 coin))	
-)
+;; a red player or a blue player can move onto a coin 
+;; if they make a move from 1 to 2 and 2 is a cell with a coin
+
+ (<= (movingOntoCoin ?player)
+      (or 
+          ( and
+                (does blue ?move) 
+                (nextCell ?move ?x1 ?y1 ?x2 ?y2)     
+                (true (cell ?x2 ?y2 coin))
+          )
+         ( and
+                (does red ?move) 
+                (nextCell ?move ?x1 ?y1 ?x2 ?y2)     
+                (true (cell ?x2 ?y2 coin))
+          )
+        )
+ )
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; if player does not move onto an apple cell
 
 ;; TODO: Move tail position to next position in ``connected''-chain
 ;; Example rule head:
-; (<= (next (cell ?x2 ?y2 ?tail))
-;;;;; ... rule body ...
-; )
+;; next positoon will be a red tail if
+;; the position 1 and 2 are connected to the red body
+;; and position 1 was originally a tail 
+;; but we dont extend since we do not passs on an apple
+
+ (<= (next (cell ?x2 ?y2 redTail))
+      (connected ?x1 ?y1 ?x2 ?y2 redBody)
+      (true (cell ?x1 ?y1 redTail))
+      (not (true (movingOntoApple red)))
+ )
+
+  ;; next positoon will be a blue tail if
+;; the position 1 and 2 are connected to the blue body
+;; and position 1 was originally a tail 
+;; but we dont extend since we do not passs on an apple
+
+  (<= (next (cell ?x2 ?y2 blueTail))
+      (connected ?x1 ?y1 ?x2 ?y2 blueBody)
+      (true (cell ?x1 ?y1 blueTail))
+      (not (true (movingOntoApple blue)))
+ )
 
 
 
@@ -321,7 +422,9 @@
 ;; or an apple cell
 ;; Example rule head:
 ; (<= (next (collectedPoints ?player ?i))
-;;;;; ... rule body ...
+;;;;; (does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
+;;;    (not (true (cell ?x2 ?y2 apple)))
+;;;;   (not (true (cell ?x2 ?y2 coin)))
 ; )
 
 
@@ -331,7 +434,10 @@
 ;; TODO: increase points by three if the player moves onto a coin cell
 ;; Example rule head:
 ; (<= (next (collectedPoints ?player ?j))
-;;;;; ... rule body ...
+;;;;; (does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
+;;;;  (true (cell ?x2 ?y2 coin))
+;;;   (true (collectedPoints ?player ?pts))
+;;;   (plusthree ?pts ?j))   
 ; )
 
 
@@ -341,21 +447,27 @@
 ;; TODO: increase points by one
 ;; Example rule head:
 ; (<= (next (collectedPoints ?player ?j))
-;;;;; ... rule body ...
+;;;;; (does ?player (nextCell ?move ?x1 ?y1 ?x2 ?y2))
+;;;;  (true (cell ?x2 ?y2 apple))
+;;;   (true (collectedPoints ?player ?pts))
+;;;   (plusone ?pts ?j))  
 ; )
 
 
 ;; TODO: Snake is extended: tail remains at current position.
 ;; Example rule head:
 ; (<= (next (cell ?x ?y ?tail))
-;;;;; ... rule body ...
+;;;   (movingOntoApple ?player)
+;;;   (true (cell ?x ?y ?tail))  
 ; )
 
 
 ;; TODO: Snake is extended: tail cell remains part of the snake's body.
 ;; Example rule head:
 ; (<= (next (cell ?x ?y ?body))
-;;;;; ... rule body ...
+;;;   (movingOntoApple ?player)
+;;;   (true (cell ?x ?y ?tail)) 
+;;;   (connected ?x1 ?y1 ?x2 ?y2 ?body)
 ; )
 
 
@@ -376,25 +488,27 @@
 
 ;; Step limit is reached:
 (<= stepLimit
-    (true (step 40)))
+    (true (step 10)))
 
 
 ;; TODO: Player is dead when it ran into the head of the other player
 ;; Example rule head for blue player:
 ; (<= (dead blue)
-;;;;; ... rule body ...
+;;;;; (true (cell ?x ?y redHead)) 
+;;;;;;(true (cell ?x ?y blueHead)) 
 ; )
 ;
 ;; Example rule head for red player:
 ; (<= (dead red)
-;;;;; ... rule body ...
+;;;;;;(true (cell ?x ?y redHead)) 
+;;;;;;(true (cell ?x ?y blueHead)) 
 ; )
 
 
 ;; TODO: Player is dead when it ran into its own or another player's body
 ;; Example rule head:
 ; (<= (dead ?player)
-;;;;; ... rule body ...
+;;;;; (true (cell ?x ?y ?body))
 ; )
 
 
