@@ -1,0 +1,13 @@
+Model the two-player version of Snake Game in GDL (Game Description Language)
+
+There are two players: red and blue. Each player controls a snake on a 9-by-9 grid. 
+In each game step, every player needs to move its snake forward to a cell adjacent to the current position of the snake’s head. 
+While moving, the snake eats objects that may be located at the new position of the snake’s head. 
+There are two kinds of objects: Coins, when eaten, increase the points of the respective player by 3. 
+Apples, when eaten, increase the points of the respective player by 1, and extend the tail of snake by one cell. 
+While apples are consumed by the snakes (are removed from the board after being eaten), coins can be eaten arbitrarily often (remain on the board after being eaten). 
+Moving the snake to a cell is only possible if that cell does not contain a wall. 
+When the snake of player x moves onto a cell which holds this snake or the other snake, then x dies. 
+If red dies, then blue obtains 10 additional points. Vice versa, if blue dies, then red obtains 10 additional points. 
+(If both die, i.e., if they run into each other, both get the additional 10 points.) 
+The game ends when either player died, but after 40 steps at the latest. The player who got most points wins.
